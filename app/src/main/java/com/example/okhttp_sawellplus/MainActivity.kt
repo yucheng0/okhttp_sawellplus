@@ -50,9 +50,16 @@ class MainActivity : AppCompatActivity() {
 
             client = OkHttpClient()                            //要一個實例
             JSON = MediaType.parse("application/json; charset=utf-8")
-            body = RequestBody.create(JSON, "{\"account\":\"w06\" ,\"pw\":\"w\" , \"timezone\":8 }")
+            val jsondata = "{\n" +
+                    "\"account\":\"w06\",\n" +
+                    "\"pw\":\"w\",\n" +
+                    "\"timezone\":8 \n" +
+                    "}\n"
+            //          body = RequestBody.create(JSON, "{\"account\":\"w06\" ,\"pw\":\"w\" , \"timezone\":8 }")
+            body = RequestBody.create(JSON, jsondata)
+
+
             request = Request.Builder()                    //建立需求
-                // 這個有問題 （這是加檔頭傳送）
                 .url(url)
                 .post(body)
                 .build()
@@ -159,27 +166,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //================Login 取得PHPSESSID , Respoose = {Status:1} =========================
