@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
             post_login()
         }
         devicelist.setOnClickListener {
+            post_login()
             post_3rd_devivce_list()
         }
     }
@@ -49,13 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 //=================================================================
 fun post_3rd_devivce_list() {
-    val url = "http://202.88.100.249/SAWELLPlus_Club/php/3rd_get_device_list.php"
-    client = OkHttpClient()                            //要一個實例
-    JSON = MediaType.parse("application/json; charset=utf-8")
-    request = Request.Builder()                    //建立需求
-        .addHeader("Cookie", phpsessid)  // （這是加檔頭傳送）
-        .url(url)
-        .build()
+
 
     GlobalScope.launch(Dispatchers.Default) {
         deviceList()
@@ -65,7 +60,7 @@ fun post_3rd_devivce_list() {
 
 
     //================Login 取得PHPSESSID , Respoose = {Status:1} =========================
-    suspend fun login() {
+    private suspend fun login() {
         withContext(Dispatchers.IO) {
             try {
                 response = client.newCall(request).execute()            // 取得回應到response 來
@@ -83,8 +78,17 @@ fun post_3rd_devivce_list() {
         }
 
        //=======================================================
-    suspend fun deviceList() {
+    private suspend fun deviceList() {
         withContext(Dispatchers.IO) {
+         delay(1000)            //不加delay 好像不行
+            val url = "http://202.88.100.249/SAWELLPlus_Club/php/3rd_get_device_list.php"
+            client = OkHttpClient()                            //要一個實例
+            JSON = MediaType.parse("application/json; charset=utf-8")
+            request = Request.Builder()                    //建立需求
+                .addHeader("Cookie", phpsessid)  // （這是加檔頭傳送）
+                .url(url)
+                .build()
+
             try {
                 response = client.newCall(request).execute()            // 取得回應到response 來
                 bodyData = response.body()!!.string()
