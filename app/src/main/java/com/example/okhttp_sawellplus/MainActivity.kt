@@ -5,12 +5,11 @@ import android.os.Bundle
 import com.squareup.okhttp.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
-    var headerfiltercookie = ""
+    var phpsessid = ""
     var client = OkHttpClient()                            //要一個實例
     var JSON = MediaType.parse("application/json; charset=utf-8")
     var body = RequestBody.create(JSON, "{\"account\":\"w06\" ,\"pw\":\"w\" , \"timezone\":8 }")
@@ -44,56 +43,58 @@ class MainActivity : AppCompatActivity() {
             .post(body)
             .build()
 
-     GlobalScope.launch(Dispatchers.Default) {
-        abcde()
+     GlobalScope.launch(Dispatchers.Default) {  //要使用Default,unconfined,IO , 用Main會當機, 奇怪
+         login()
         }
     }
 //=================================================================
 fun post_3rd_devivce_list() {
-
     val url = "http://202.88.100.249/SAWELLPlus_Club/php/3rd_get_device_list.php"
-
-   client = OkHttpClient()                            //要一個實例
-     JSON = MediaType.parse("application/json; charset=utf-8")
-     body = RequestBody.create(JSON, "{\"account\":\"w06\" ,\"pw\":\"w\" , \"timezone\":8 }")
-     request = Request.Builder()                    //建立需求
-        .addHeader("Cookie",headerfiltercookie)  // 這個有問題 （這是加檔頭傳送）
+    client = OkHttpClient()                            //要一個實例
+    JSON = MediaType.parse("application/json; charset=utf-8")
+    request = Request.Builder()                    //建立需求
+        .addHeader("Cookie", phpsessid)  // （這是加檔頭傳送）
         .url(url)
-        .post(body)
         .build()
 
-    GlobalScope.launch(Dispatchers.Main) {
-        try {
-            val response: Response = client.newCall(request).execute()            // 取得回應到response 來
-   //         abc(response)
-    //        println(response.request())
-     //       println(response.body()!!.string())                    //本文字串
-
-
-        }catch (e:Exception) {
-            println ("Error!!!!")
-        }
+    GlobalScope.launch(Dispatchers.Default) {
+        deviceList()
     }
+
 }
 
-    private suspend fun abcde() {
+
+    //================Login 取得PHPSESSID , Respoose = {Status:1} =========================
+    suspend fun login() {
         withContext(Dispatchers.IO) {
             try {
                 response = client.newCall(request).execute()            // 取得回應到response 來
-   //             println(response.body().string())                    //本文字串
-                headerfiltercookie = response.header("Set-Cookie")  //PHPSESSID
+                phpsessid = response.header("Set-Cookie")  //PHPSESSID
                 bodyData = response.body()!!.string()
-                println(bodyData)
-               println(headerfiltercookie)
+          //      println(bodyData)
+          //     println(phpsessid)
                 runOnUiThread {
-                                 textView.text = "${bodyData}"
+                    textView.text = "${bodyData} \n ${phpsessid}"
                 }
             } catch (e: Exception) {
                 println("Error!!!!")
             }
+        }
+        }
 
-
-
+       //=======================================================
+    suspend fun deviceList() {
+        withContext(Dispatchers.IO) {
+            try {
+                response = client.newCall(request).execute()            // 取得回應到response 來
+                bodyData = response.body()!!.string()
+               println(bodyData)
+                runOnUiThread {
+                  textView.text = "${bodyData}"
+             }
+            } catch (e: Exception) {
+                println("Error!!!!")
+            }
         }
     }
-}
+    }
