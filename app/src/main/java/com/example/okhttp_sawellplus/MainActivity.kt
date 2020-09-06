@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
                 println("Error!!!!")
 
             }
-            //      login()
         }
     }
 
@@ -111,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                 println("Error!!!!")
             }
 
-            //     deviceList()
         }
 
     }
@@ -152,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //=================================================================
+    //=====================================================================================
     fun post3rd_get_club_greenwatter() {
         GlobalScope.launch(Dispatchers.Default) {
             delay(1000)            //不加delay 好像不行 , 網路備好時間(min=300ms)
